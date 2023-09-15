@@ -16,6 +16,7 @@ aes = "0.8.3"
 ctr = "0.9.2"
 sha2 = "0.10.7"
 bytes = "1"
+anyhow = "1.0"
 
 [[example]]
 name = "ping"

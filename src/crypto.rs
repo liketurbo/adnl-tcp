@@ -1,10 +1,9 @@
+use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine as _};
 use ctr::cipher::{KeyIvInit, StreamCipher};
 use curve25519_dalek::{edwards::CompressedEdwardsY, MontgomeryPoint};
 use sha2::{Digest, Sha256};
 use x25519_dalek::PublicKey;
-
-use crate::Result;
 
 /// Get Key ID: SHA256 hash of serialized TL schema.
 /// Common TL schemas and IDs:
@@ -59,7 +58,7 @@ pub fn encrypt_aes_params(
 pub fn ed25519_to_x25519(ed25519_public_key: &[u8; 32]) -> Result<[u8; 32]> {
     let x25519_public_key = CompressedEdwardsY::from_slice(ed25519_public_key)?
         .decompress()
-        .ok_or("decompression failed")?
+        .ok_or(anyhow!("decompression failed"))?
         .to_montgomery();
     Ok(*x25519_public_key.as_bytes())
 }
@@ -70,7 +69,7 @@ pub fn ed25519_to_x25519(ed25519_public_key: &[u8; 32]) -> Result<[u8; 32]> {
 pub fn x25519_to_ed25519(x25519_public_key: &[u8; 32]) -> Result<[u8; 32]> {
     let ed25519_public_key = MontgomeryPoint(*x25519_public_key)
         .to_edwards(0)
-        .ok_or("conversion failed")?
+        .ok_or(anyhow!("conversion failed"))?
         .compress();
     Ok(*ed25519_public_key.as_bytes())
 }
@@ -87,9 +86,9 @@ impl ToPublicKey for &str {
     fn to_public(&self) -> Result<PublicKey> {
         let bytes: [u8; 32] = general_purpose::STANDARD
             .decode(self)
-            .map_err(|_| "invalid base64")?
+            .map_err(|_| anyhow!("invalid base64"))?
             .try_into()
-            .map_err(|_| "invalid key size")?;
+            .map_err(|_| anyhow!("invalid key size"))?;
         Ok(PublicKey::from(bytes))
     }
 }

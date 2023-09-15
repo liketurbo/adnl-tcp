@@ -1,8 +1,8 @@
 use crate::{
     crypto::{ed25519_to_x25519, encrypt_aes_params, gen_key_id, x25519_to_ed25519, AesCipher},
     datagram::Datagram,
-    Result,
 };
+use anyhow::{anyhow, Result};
 use bytes::{Buf, BytesMut};
 use ctr::cipher::{KeyIvInit, StreamCipher};
 use rand::prelude::*;
@@ -108,10 +108,10 @@ impl Connection {
                 return Ok(enc_connection);
             }
 
-            return Err("handshake failed".into());
+            return Err(anyhow!("handshake failed"));
         }
 
-        Err("keys exchange only possible for init connection".into())
+        Err(anyhow!("keys exchange only possible for init connection"))
     }
 
     pub async fn read_datagram(&mut self) -> Result<Option<Datagram>> {
@@ -139,14 +139,14 @@ impl Connection {
                     if buffer.is_empty() {
                         return Ok(None);
                     }
-                    return Err("connection reset by peer".into());
+                    return Err(anyhow!("connection reset by peer"));
                 }
 
                 rx_cipher.apply_keystream(&mut buffer[len..]);
             }
         }
 
-        Err("datagram read only possible for enc connection".into())
+        Err(anyhow!("datagram read only possible for enc connection"))
     }
 
     pub async fn write_datagram(&mut self, datagram: &Datagram) -> Result<usize> {
@@ -168,6 +168,6 @@ impl Connection {
             return Ok(bytes_len);
         }
 
-        Err("datagram write only possible for enc connection".into())
+        Err(anyhow!("datagram write only possible for enc connection"))
     }
 }

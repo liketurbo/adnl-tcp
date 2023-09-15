@@ -1,4 +1,4 @@
-use crate::Result;
+use anyhow::{anyhow, Result};
 use bytes::{Buf, BytesMut};
 use rand::prelude::*;
 use sha2::{Digest, Sha256};
@@ -64,7 +64,7 @@ impl Datagram {
 
             let nonce_hash = Sha256::new().chain_update(&nonce_bytes).finalize();
             if nonce_hash[..] != hash_bytes[..] {
-                return Err("corrupted datagram".into());
+                return Err(anyhow!("corrupted datagram"));
             }
 
             return Ok(Datagram::Empty {
@@ -87,7 +87,7 @@ impl Datagram {
             .finalize();
 
         if datagram_hash[..] != hash_bytes[..] {
-            return Err("corrupted datagram".into());
+            return Err(anyhow!("corrupted datagram"));
         }
 
         Ok(Datagram::new(len, nonce_bytes, buf, hash_bytes))
@@ -125,7 +125,7 @@ impl Datagram {
 
     pub fn from_buf(buf: &[u8]) -> Result<Datagram> {
         if buf.len() > BUFFER_LEN {
-            return Err("datagram size exceeded".into());
+            return Err(anyhow!("datagram size exceeded"));
         }
 
         let mut nonce_bytes = [0u8; NONCE_LEN];

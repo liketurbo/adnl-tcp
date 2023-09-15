@@ -2,7 +2,7 @@ use crate::connection::Connection;
 use crate::crypto::ToPublicKey;
 use crate::datagram::Datagram;
 use crate::tl_types::{Answer, Ping, Pong, Query};
-use crate::Result;
+use anyhow::{anyhow, Result};
 use rand::prelude::*;
 use tokio::net::{TcpStream, ToSocketAddrs};
 
@@ -39,7 +39,7 @@ impl Client {
             let pong = tl_proto::deserialize::<Pong>(&buffer)?;
             return Ok(pong);
         } else {
-            return Err("ping failed: invalid response datagram".into());
+            return Err(anyhow!("ping failed: invalid response datagram"));
         }
     }
 
@@ -58,7 +58,7 @@ impl Client {
             let answer = tl_proto::deserialize::<Answer>(&buffer)?;
             return Ok(answer);
         } else {
-            return Err("query failed: invalid response datagram".into());
+            return Err(anyhow!("query failed: invalid response datagram"));
         }
     }
 }
