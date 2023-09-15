@@ -29,4 +29,7 @@ async fn main() {
 
 ## Credits
 
-A thanks to @xssnick for providing great documentation at [ton-deep-doc/ADNL-TCP-Liteserver](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md) 
+Thanks to the following:
+
+- @xssnick for providing documentation at [ton-deep-doc/ADNL-TCP-Liteserver](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md)
+- @hacker-volodya for providing documentation at [tonstack/ton-docs](https://github.com/tonstack/ton-docs/tree/main/ADNL)
